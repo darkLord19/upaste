@@ -29,6 +29,7 @@ type PasteModel struct {
 }
 
 func pasteHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "whomustnotbenamed.com")
 	var p PasteModel
 	err := json.NewDecoder(r.Body).Decode(&p)
 	if err != nil {

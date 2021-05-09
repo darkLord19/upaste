@@ -14,6 +14,7 @@ import (
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", pasteHandler).Methods(http.MethodPost)
+	router.Use(mux.CORSMethodMiddleware(router))
 
 	port := os.Getenv("PORT")
 	if port == "" {
