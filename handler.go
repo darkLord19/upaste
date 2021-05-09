@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -13,11 +14,11 @@ import (
 var redisClient *redis.Client
 
 func init() {
-	redisClient = redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_ADDR"),
-		Password: os.Getenv("REDIS_PASSWD"),
-		DB:       0,
-	})
+	opts, err := redis.ParseURL(os.Getenv("REDIS_URL"))
+	if err != nil {
+		panic(err)
+	}
+	redisClient = redis.NewClient(opts)
 }
 
 type PasteModel struct {
@@ -38,7 +39,7 @@ func pasteHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	key := "upaste" + string(p.CreatedAt.Unix())
+	key := "upaste_" + fmt.Sprint(p.CreatedAt.Unix())
 	value := string(b)
 	err = redisClient.Set(context.Background(), key, value, 0).Err()
 	if err != nil {
