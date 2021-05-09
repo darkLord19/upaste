@@ -15,15 +15,21 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", pasteHandler).Methods(http.MethodPost)
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	addr := ":" + port
 	srv := &http.Server{
-		Addr:         ":8080",
+		Addr:         addr,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
 		Handler:      router,
 	}
 
-	log.Println("starting server on :8080")
+	log.Println("starting server on " + addr)
 	// Run our server in a goroutine so that it doesn't block.
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
