@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -16,6 +17,7 @@ var redisClient *redis.Client
 func init() {
 	opts, err := redis.ParseURL(os.Getenv("REDIS_URL"))
 	if err != nil {
+		log.Println("Could not parse redis url", err.Error())
 		panic(err)
 	}
 	redisClient = redis.NewClient(opts)
